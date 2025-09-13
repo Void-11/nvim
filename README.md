@@ -267,7 +267,3 @@ export NVIM_APPNAME=nvim-unified-ide && nvim   # this config
 - Next.js debug: ensure Node and js‑debug are installed (Mason handles js‑debug); use the provided launch config
 
 ---
-
-## License
-
-MIT
