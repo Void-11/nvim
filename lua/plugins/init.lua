@@ -36,6 +36,7 @@ extend("plugins.jupyter")
 extend("plugins.databases")
 extend("plugins.project_templates")
 extend("plugins.project_nvim")
+extend("plugins.tests")
 
 return specs
 

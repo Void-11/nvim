@@ -9,6 +9,10 @@ return {
     "nvim-treesitter/nvim-treesitter",
     event = { "BufReadPost", "BufNewFile" },
     build = has_cc and ":TSUpdate" or nil,
+    dependencies = {
+      { "nvim-treesitter/nvim-treesitter-textobjects" },
+      { "windwp/nvim-ts-autotag" },
+    },
     init = function()
       -- Load MSVC environment as early as possible so healthcheck sees `cl`
       pcall(function()
@@ -40,6 +44,25 @@ return {
         sync_install = false,
         highlight = { enable = true },
         indent = { enable = true },
+        autotag = { enable = true },
+        textobjects = {
+          select = {
+            enable = true,
+            lookahead = true,
+            keymaps = {
+              ["af"] = "@function.outer",
+              ["if"] = "@function.inner",
+              ["ac"] = "@class.outer",
+              ["ic"] = "@class.inner",
+            },
+          },
+          move = {
+            enable = true,
+            set_jumps = true,
+            goto_next_start = { ["]m"] = "@function.outer", ["]c"] = "@class.outer" },
+            goto_previous_start = { ["[m"] = "@function.outer", ["[c"] = "@class.outer" },
+          },
+        },
       }
     end,
     config = function(_, opts)

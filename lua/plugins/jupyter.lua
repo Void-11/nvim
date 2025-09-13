@@ -22,7 +22,7 @@ return {
     build = ":UpdateRemotePlugins",
     ft = { "python", "ipynb", "qmd", "markdown" },
     config = function()
-      vim.g.magma_image_provider = "kitty" -- or "ueberzug" depending on terminal
+      -- On Windows, image providers may not be available; leave default
       vim.keymap.set('n', '<leader>mi', ":MagmaInit<CR>", { desc = "Magma: Init" })
       vim.keymap.set('n', '<leader>mr', ":MagmaEvaluateOperator<CR>", { desc = "Magma: Eval Operator" })
       vim.keymap.set('n', '<leader>ml', ":MagmaEvaluateLine<CR>", { desc = "Magma: Eval Line" })
@@ -30,6 +30,13 @@ return {
       vim.keymap.set('n', '<leader>mc', ":MagmaReevaluateCell<CR>", { desc = "Magma: Re-eval Cell" })
       vim.keymap.set('n', '<leader>md', ":MagmaDelete<CR>", { desc = "Magma: Delete Cell" })
     end,
+  },
+  -- Molten (optional richer Jupyter kernel)
+  {
+    "benlubas/molten-nvim",
+    ft = { "python", "ipynb", "qmd", "markdown" },
+    build = ":UpdateRemotePlugins",
+    opts = {},
   },
 }
 

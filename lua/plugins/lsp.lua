@@ -14,7 +14,7 @@ return {
       "williamboman/mason.nvim",
       "neovim/nvim-lspconfig",
     },
-    opts = { ensure_installed = { "lua_ls", "clangd", "ts_ls", "pyright", "ruff", "eslint", "tailwindcss", "jsonls", "yamlls", "dockerls", "docker_compose_language_service", "bashls", "html", "cssls", "sqlls", "emmet_language_server", "marksman" } },
+    opts = { ensure_installed = { "lua_ls", "clangd", "vtsls", "pyright", "ruff", "eslint", "tailwindcss", "jsonls", "yamlls", "dockerls", "docker_compose_language_service", "bashls", "html", "cssls", "sqlls", "emmet_language_server", "marksman" } },
   },
   { "WhoIsSethDaniel/mason-tool-installer.nvim", event = "VeryLazy" },
 
@@ -29,6 +29,7 @@ return {
       "williamboman/mason-lspconfig.nvim",
       "WhoIsSethDaniel/mason-tool-installer.nvim",
       "b0o/schemastore.nvim",
+      "SmiteshP/nvim-navic",
     },
     config = function()
       local lspconfig = require("lspconfig")
@@ -56,9 +57,15 @@ return {
         bufmap("n", "gD", vim.lsp.buf.declaration, "Declaration")
         
         -- Avoid formatter conflicts (use conform.nvim for JS/TS formatting)
-        if client.name == "ts_ls" then
+        if client.name == "vtsls" then
           client.server_capabilities.documentFormattingProvider = false
           client.server_capabilities.documentRangeFormattingProvider = false
+        end
+        
+        -- Breadcrumbs (nvim-navic)
+        local ok_navic, navic = pcall(require, "nvim-navic")
+        if ok_navic and client.server_capabilities.documentSymbolProvider then
+          pcall(navic.attach, client, bufnr)
         end
         
         if client.server_capabilities.inlayHintProvider and vim.lsp.inlay_hint then
@@ -73,11 +80,12 @@ return {
 
       -- Servers
       local servers = {
-        -- TypeScript/JavaScript
-        ts_ls = {
+        -- TypeScript/JavaScript (vtsls)
+        vtsls = {
           settings = {
             typescript = { preferences = { includePackageJsonAutoImports = "on" } },
             javascript = { preferences = { includePackageJsonAutoImports = "on" } },
+            vtsls = { experimental = { completion = { enableServerSideFuzzyMatch = true } } },
           },
         },
         emmet_language_server = {},

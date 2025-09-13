@@ -36,6 +36,8 @@ local function add_self_to_paths()
   end
   -- Normalize to forward slashes
   dir = dir:gsub("\\", "/")
+  -- Expose config root for other modules (e.g., lockfile path)
+  vim.g.unified_config_root = dir
   -- Add to runtimepath if missing
   local rtp = vim.opt.rtp:get()
   local present = false
@@ -71,6 +73,7 @@ require("lazy").setup(require("plugins"), {
   change_detection = { notify = false },
   defaults = { lazy = true },
   rocks = { enabled = false },
+  lockfile = (vim.g.unified_config_root or vim.fn.stdpath("config")) .. "/lazy-lock.json",
   performance = {
     rtp = {
       disabled_plugins = {

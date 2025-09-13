@@ -16,6 +16,7 @@ return {
     event = "VeryLazy",
     dependencies = { "nvim-tree/nvim-web-devicons" },
     opts = function()
+      local navic = require("nvim-navic")
       return {
         options = {
           theme = "tokyonight",
@@ -30,10 +31,20 @@ return {
             { "filename", path = 1 },
             {
               function()
+                if navic.is_available() then
+                  return navic.get_location()
+                end
+                return ""
+              end,
+              cond = function() return navic.is_available() end,
+              color = { fg = "#7aa2f7" },
+            },
+            {
+              function()
                 if vim.g.unified_project and vim.g.unified_project.has_pixi then
                   local env = vim.fn.getenv("PIXI_ENVIRONMENT_NAME")
                   if env and env ~= vim.NIL and env ~= "" then
-                    return "🐍 " .. env
+                    return " 🐍 " .. env
                   end
                 end
                 return ""

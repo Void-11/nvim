@@ -37,8 +37,6 @@ if vim.fn.executable("python") == 1 then
 end
 
 -- Performance for large projects
--- Noice requires lazyredraw to be disabled; enable other perf tweaks instead
-vim.opt.lazyredraw = false
 vim.opt.synmaxcol = 300
 vim.opt.maxmempattern = 20000
 
