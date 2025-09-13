@@ -1,4 +1,4 @@
-# nvim-unified-ide
+# Neovim Config
 
 A unified, batteries-included Neovim configuration for full‑stack development, AI/ML research, native/C++ (including Unreal Engine 5), DevOps, and databases. It is fast, modular, cross‑platform, and project‑aware.
 
