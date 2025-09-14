@@ -32,6 +32,11 @@ return {
       "SmiteshP/nvim-navic",
     },
     config = function()
+      -- Initialize neodev early so lua_ls picks up Neovim runtime and globals
+      pcall(function()
+        require("neodev").setup({})
+      end)
+
       local lspconfig = require("lspconfig")
       local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
@@ -57,7 +62,7 @@ return {
         bufmap("n", "gD", vim.lsp.buf.declaration, "Declaration")
         
         -- Avoid formatter conflicts (use conform.nvim for JS/TS formatting)
-        if client.name == "vtsls" then
+        if client.name == "vtsls" or client.name == "eslint" then
           client.server_capabilities.documentFormattingProvider = false
           client.server_capabilities.documentRangeFormattingProvider = false
         end
@@ -83,9 +88,12 @@ return {
         -- TypeScript/JavaScript (vtsls)
         vtsls = {
           settings = {
-            typescript = { preferences = { includePackageJsonAutoImports = "on" } },
+            typescript = { preferences = { includePackageJsonAutoImports = "on", importModuleSpecifier = "non-relative" } },
             javascript = { preferences = { includePackageJsonAutoImports = "on" } },
-            vtsls = { experimental = { completion = { enableServerSideFuzzyMatch = true } } },
+            vtsls = {
+              tsserver = { globalPlugins = {} },
+              experimental = { completion = { enableServerSideFuzzyMatch = true } },
+            },
           },
         },
         emmet_language_server = {},
@@ -112,13 +120,16 @@ return {
               },
             },
           },
+          filetypes = { "html", "css", "scss", "javascript", "typescript", "javascriptreact", "typescriptreact", "svelte", "vue" },
+          root_dir = require("lspconfig.util").root_pattern("tailwind.config.js", "tailwind.config.ts", "postcss.config.js", "postcss.config.ts", "package.json"),
         },
         -- JSON
         jsonls = {
           settings = {
             json = {
               schemas = (function()
-                local schemas = require("schemastore").json.schemas()
+                local ok, store = pcall(require, "schemastore")
+                local schemas = ok and store.json.schemas() or {}
                 table.insert(schemas, { fileMatch = { "*.uproject" }, url = "https://json.schemastore.org/unreal-engine-project.json" })
                 table.insert(schemas, { fileMatch = { "*.uplugin" }, url = "https://json.schemastore.org/unreal-engine-plugin.json" })
                 return schemas
@@ -138,12 +149,26 @@ return {
         bashls = {},
         -- Lua
         lua_ls = {
-          settings = { Lua = { workspace = { checkThirdParty = false }, completion = { callSnippet = "Replace" } } },
+          settings = {
+            Lua = {
+              runtime = { version = "LuaJIT" },
+              workspace = {
+                checkThirdParty = false,
+              },
+              diagnostics = {
+                globals = { "vim" },
+                disable = { "missing-fields" },
+              },
+              completion = { callSnippet = "Replace" },
+              telemetry = { enable = false },
+            },
+          },
         },
         -- Web
         html = {},
         cssls = {},
-        eslint = {},
+        -- Disable ESLint LSP by default on Windows for performance; rely on Biome/Prettier for formatting
+        eslint = { enabled = false },
         -- SQL (Node-based: sql-language-server; better Windows support)
         sqlls = {},
         -- Python linting (Ruff)
@@ -190,9 +215,11 @@ return {
       -- Ensure tools installed
       local ensure = vim.tbl_keys(servers)
       vim.list_extend(ensure, {
-        "stylua", "prettier", "prettierd", "eslint_d", "flake8", "mypy", "ruff",
+        -- Formatters and tools
+        "stylua", "biome", "prettier", "prettierd", "clang-format",
+        "eslint_d", "flake8", "mypy", "ruff",
       })
-      pcall(require("mason-tool-installer").setup, { ensure_installed = ensure })
+      pcall(require("mason-tool-installer").setup, { ensure_installed = ensure, run_on_start = true, auto_update = false })
     end,
   },
 }

@@ -28,7 +28,7 @@ return {
     dependencies = { "rcarriga/nvim-notify", "MunifTanjim/nui.nvim" },
     opts = {
       presets = { bottom_search = true, command_palette = true, long_message_to_split = true },
-      lsp = { progress = { enabled = true } },
+      lsp = { progress = { enabled = true }, override = { ["cmp.entry.get_documentation"] = true } },
     },
   },
   -- Spectre (project-wide find/replace)

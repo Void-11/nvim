@@ -57,11 +57,22 @@ add_self_to_paths()
 -- Core settings and project detection
 require("core.options")
 
+
+
 -- On Windows, import MSVC Developer environment so `cl` is available for build helpers
 pcall(function()
   local uname = (vim.uv or vim.loop).os_uname()
   if uname and uname.sysname == "Windows_NT" then
     require("core.msvc_env").load({ arch = "x64" })
+  end
+end)
+
+-- On Windows, point Neovim's Python host to the first available python/python3
+pcall(function()
+  if vim.fn.has("win32") == 1 and not vim.g.python3_host_prog then
+    local py = vim.fn.exepath("python3")
+    if py == "" then py = vim.fn.exepath("python") end
+    if py ~= "" then vim.g.python3_host_prog = py end
   end
 end)
 

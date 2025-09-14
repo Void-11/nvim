@@ -38,7 +38,7 @@ return {
     },
     config = function()
       local telescope = require("telescope")
-      local has_fd = (vim.fn.executable("fd") == 1)
+      local has_fd = (vim.fn.executable("fd") == 1) or (vim.fn.executable("fdfind") == 1)
       local vimgrep = {
         "rg", "--color=never", "--no-heading", "--with-filename",
         "--line-number", "--column", "--smart-case","--hidden",
@@ -54,7 +54,7 @@ return {
         },
         pickers = {
           find_files = has_fd
-            and { find_command = { "fd", "--type", "f", "--hidden", "--follow", "--exclude", ".git" } }
+            and { find_command = { (vim.fn.executable("fd") == 1) and "fd" or "fdfind", "--type", "f", "--hidden", "--follow", "--exclude", ".git" } }
             or { hidden = true },
         },
         extensions = {

@@ -63,8 +63,16 @@ return {
   {
     "rcarriga/nvim-notify",
     lazy = false,
-    config = function()
-      vim.notify = require("notify")
+    opts = { 
+      stages = "fade",
+      render = "default",
+      timeout = 3000,
+      top_down = false,
+    },
+    config = function(_, opts)
+      local notify = require("notify")
+      notify.setup(opts)
+      vim.notify = notify
     end,
   },
   -- Which-key: lazy-load with v3 spec registration via opts
@@ -87,7 +95,7 @@ return {
     },
   },
   -- Indent guides
-  { "lukas-reineke/indent-blankline.nvim", main = "ibl", event = "VeryLazy", opts = {} },
+  { "lukas-reineke/indent-blankline.nvim", main = "ibl", event = "VeryLazy", opts = { scope = { enabled = true } } },
   -- Dashboard
   {
     "goolord/alpha-nvim",

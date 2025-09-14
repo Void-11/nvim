@@ -18,6 +18,11 @@ return {
       local lspkind = require("lspkind")
       luasnip.config.setup({})
       require("luasnip.loaders.from_vscode").lazy_load()
+      -- Integrate autopairs on confirm
+      pcall(function()
+        local cmp_autopairs = require("nvim-autopairs.completion.cmp")
+        cmp.event:on("confirm_done", cmp_autopairs.on_confirm_done())
+      end)
 
       cmp.setup({
         snippet = {
@@ -50,6 +55,7 @@ return {
           completion = cmp.config.window.bordered(),
           documentation = cmp.config.window.bordered(),
         },
+        experimental = { ghost_text = true },
       })
     end,
   },

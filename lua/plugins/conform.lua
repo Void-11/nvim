@@ -25,15 +25,20 @@ return {
       formatters_by_ft = {
         lua = { "stylua" },
         python = { "ruff_fix", "ruff_format" },
-        javascript = { "prettierd", "prettier" },
-        typescript = { "prettierd", "prettier" },
-        javascriptreact = { "prettierd", "prettier" },
-        typescriptreact = { "prettierd", "prettier" },
-        json = { "prettierd", "prettier" },
+        -- Prefer Biome when available; fall back to Prettier
+        javascript = { "biome", "prettierd", "prettier" },
+        typescript = { "biome", "prettierd", "prettier" },
+        javascriptreact = { "biome", "prettierd", "prettier" },
+        typescriptreact = { "biome", "prettierd", "prettier" },
+        json = { "biome", "prettierd", "prettier" },
+        jsonc = { "biome", "prettierd", "prettier" },
         yaml = { "prettierd", "prettier" },
-        markdown = { "prettierd", "prettier" },
-        css = { "prettierd", "prettier" },
-        html = { "prettierd", "prettier" },
+        markdown = { "biome", "prettierd", "prettier" },
+        css = { "biome", "prettierd", "prettier" },
+        html = { "biome", "prettierd", "prettier" },
+        -- C/C++: use clang-format if present
+        c = { "clang_format" },
+        cpp = { "clang_format" },
       },
     },
     config = function(_, opts)
