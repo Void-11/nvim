@@ -177,9 +177,9 @@ return {
         clangd = {
           cmd = (function()
             local args = {
-              "--background-index", "--clang-tidy", "--completion-style=detailed", "--cross-file-rename",
+              "--background-index", "--clang-tidy", "--completion-style=detailed",
               "--header-insertion=iwyu", "--header-insertion-decorators", "--function-arg-placeholders",
-              "--fallback-style=none", "--all-scopes-completion", "--pch-storage=memory", "--malloc-trim",
+              "--fallback-style=none", "--all-scopes-completion", "--pch-storage=memory",
               "--compile-commands-dir=.",
             }
             if _G.is_ue5_project and _G.is_ue5_project() then
@@ -189,14 +189,14 @@ return {
                 table.insert(args, "-I" .. vim.g.ue5_engine_path .. "/Engine/Source/Runtime/CoreUObject/Public")
                 table.insert(args, "-I" .. vim.g.ue5_engine_path .. "/Engine/Source/Runtime/Engine/Public")
               end
-              table.insert(args, "-DWITH_EDITOR=1")
-              table.insert(args, "-DUE_BUILD_DEVELOPMENT=1")
-              if vim.fn.has("mac") == 1 then
-                table.insert(args, "-DPLATFORM_MAC=1")
-              elseif vim.fn.has("win32") == 1 then
-                table.insert(args, "-DPLATFORM_WINDOWS=1")
-              elseif vim.fn.has("unix") == 1 then
-                table.insert(args, "-DPLATFORM_LINUX=1")
+              -- Don't pass -D flags to clangd; they belong in compile_commands.json
+              -- Help clangd understand MSVC toolchain on Windows
+              if vim.fn.has("win32") == 1 then
+                table.insert(args, "--query-driver=cl.exe;clang-cl.exe")
+              end
+            else
+              if vim.fn.has("win32") == 1 then
+                table.insert(args, "--query-driver=cl.exe;clang-cl.exe")
               end
             end
             return vim.list_extend({ "clangd" }, args)
